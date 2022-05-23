@@ -13,7 +13,8 @@
   font-size: 18px;
   line-height: 22px;
   transition: 0.3s;
-  margin-top: 150px;
+  margin: 150px 0 0;
+  padding: 0;
 }
 
 .entry-form__button:hover {

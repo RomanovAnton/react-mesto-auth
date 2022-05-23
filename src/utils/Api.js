@@ -67,6 +67,7 @@ class Api {
       }),
     }).then((res) => (res.ok ? res.json() : Promise.reject(res.status)));
   }
+
 }
 
 const api = new Api({
