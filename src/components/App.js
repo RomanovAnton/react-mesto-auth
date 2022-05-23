@@ -177,6 +177,8 @@ function App() {
   useEffect(() => {
     if (loggedIn) {
       history.push("/main");
+    } else {
+      history.push("/sign-in")
     }
   }, [loggedIn]);
 
@@ -194,7 +196,6 @@ function App() {
     auth
       .authorize(data)
       .then((res) => {
-        console.log(res)
         if (res.token) {
           localStorage.setItem("token", res.token);
         }

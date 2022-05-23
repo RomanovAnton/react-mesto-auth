@@ -7,6 +7,7 @@ function Register(props) {
     email: "",
     password: "",
   });
+  
   function handleChange(evt) {
     const { name, value } = evt.target;
     setFormParams((prev) => ({
