@@ -35,27 +35,31 @@ function App() {
   const [loggedIn, setLoggedIn] = useState(false);
   const [resStatus, setResStatus] = useState("");
   const history = useHistory();
+  const infoText = {
+    success: "Вы успешно зарегистрировались!",
+    error: "Что-то пошло не так! Попробуйте еще раз",
+  };
 
   useEffect(() => {
-    api
-      .getProfile()
-      .then((res) => {
-        setCurrentUser(res);
-      })
-      .catch((err) => console.log(`Ошибка.....: ${err}`));
-
-    api
-      .getCards()
-      .then((res) => {
-        setCards(res);
-      })
-      .catch((err) => console.log(`Ошибка.....: ${err}`));
-
     getUserData();
   }, []);
 
   useEffect(() => {
     if (loggedIn) {
+      api
+        .getProfile()
+        .then((res) => {
+          setCurrentUser(res);
+        })
+        .catch((err) => console.log(`Ошибка.....: ${err}`));
+
+      api
+        .getCards()
+        .then((res) => {
+          setCards(res);
+        })
+        .catch((err) => console.log(`Ошибка.....: ${err}`));
+
       history.push("/");
     }
   }, [loggedIn]);
@@ -182,12 +186,15 @@ function App() {
   }
 
   function getUserData() {
-    if (localStorage.getItem("token")) {
-      let token = localStorage.getItem("token");
-      auth.checkToken(token).then((res) => {
-        setLoggedIn(true);
-        setUserData(res);
-      });
+    let token = localStorage.getItem("token");
+    if (token) {
+      auth
+        .checkToken(token)
+        .then((res) => {
+          setLoggedIn(true);
+          setUserData(res);
+        })
+        .catch((err) => console.log(err));
     }
   }
 
@@ -197,10 +204,14 @@ function App() {
       .then((res) => {
         if (res.token) {
           localStorage.setItem("token", res.token);
+          setResStatus("success");
         }
         getUserData();
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        setResStatus("error");
+        setInfoTooltipPopupOpen(true);
+      });
   }
 
   function signOut() {
@@ -236,7 +247,7 @@ function App() {
               <Register handleRegister={handleRegister} />
             </Route>
 
-            <ProtectedRoute path="/" loggedIn={loggedIn}>
+            <ProtectedRoute exact path="/" loggedIn={loggedIn}>
               <Header userData={userData} signOut={signOut} />
               <Main
                 onEditProfile={handleEditProfileClick}
@@ -289,6 +300,7 @@ function App() {
 
           <ImagePopup card={selectedCard} onClose={closeAllPopups} />
           <InfoTooltip
+            infoText={infoText}
             isOpen={isInfoTooltipPopupOpen}
             onClose={closeAllPopups}
             resStatus={resStatus}

@@ -43,8 +43,8 @@ function InfoTooltip(props) {
           className="popup__title"
         >
           {props.resStatus == "success"
-            ? "Вы успешно зарегистрировались!"
-            : "Что-то пошло не так! Попробуйте еще раз"}
+            ? props.infoText.success
+            : props.infoText.error}
         </h2>
         <button className="popup__button-close" type="button">
           <img

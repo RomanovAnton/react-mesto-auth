@@ -23,7 +23,6 @@ function AddPlacePopup(props) {
     setCardLink("");
   }, [props.isOpen]);
 
-
   return (
     <PopupWithForm
       name="add-card"
@@ -48,7 +47,7 @@ function AddPlacePopup(props) {
         value={cardName}
       />
       <span className="popup__input-error popup__card-name-error ">
-      {props.errorMessage.name && props.errorMessage.name}
+        {props.errorMessage.name && props.errorMessage.name}
       </span>
       <input
         type="url"
@@ -61,7 +60,7 @@ function AddPlacePopup(props) {
         value={cardLink}
       />
       <span className="popup__input-error popup__card-link-error">
-      {props.errorMessage.link && props.errorMessage.link}
+        {props.errorMessage.link && props.errorMessage.link}
       </span>
     </PopupWithForm>
   );
