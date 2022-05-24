@@ -24,7 +24,7 @@ function App() {
   const [isInfoTooltipPopupOpen, setInfoTooltipPopupOpen] = useState(false);
   const [isDeleteConfirmPopupOpen, setDeleteConfirmPopupOpen] = useState(false);
   const [currentUser, setCurrentUser] = useState({}); //profileData
-  const [userData, setUserData] = useState({}); //авторозиванный пользаватель
+  const [userData, setUserData] = useState({}); //email авториз. пользователя
   const [selectedCard, setSelectedCard] = useState({});
   const [cards, setCards] = useState([]);
   const [dataDeleteCard, setDataDeleteCard] = useState({});
@@ -53,6 +53,17 @@ function App() {
 
     getUserData();
   }, []);
+
+  useEffect(() => {
+    if (loggedIn) {
+      history.push("/");
+    }
+  }, [loggedIn]);
+
+  useEffect(() => {
+    setErrorMessage({});
+    setButtonState(true);
+  }, [isEditProfilePopupOpen, isAddPlacePopupOpen, isEditAvatarPopupOpen]);
 
   function handleEditProfileClick() {
     setEditProfilePopupOpen(true);
@@ -157,30 +168,18 @@ function App() {
       .finally(() => setSubbmitButton("Сохранить"));
   }
 
-  //Auth==========================================
   function handleRegister(data) {
     auth
       .register(data)
       .then((res) => {
         if (res) {
-          setResStatus("succsess");
+          setResStatus("success");
         }
-        history.push("/sign-in");}
-      )
-      .catch((err) => {
-        setResStatus("error");
+        history.push("/sign-in");
       })
-        
-    setInfoTooltipPopupOpen(true);
+      .catch((err) => setResStatus("error"))
+      .finally(() => setInfoTooltipPopupOpen(true));
   }
-
-  useEffect(() => {
-    if (loggedIn) {
-      history.push("/main");
-    } else {
-      history.push("/sign-in")
-    }
-  }, [loggedIn]);
 
   function getUserData() {
     if (localStorage.getItem("token")) {
@@ -201,18 +200,16 @@ function App() {
         }
         getUserData();
       })
-
       .catch((err) => console.log(err));
   }
+
   function signOut() {
     localStorage.removeItem("token");
     setUserData({});
     setLoggedIn(false);
     history.push("/sign-in");
   }
-  //Auth==========================================
 
-  //Validation==================================
   function checkInputValidity(evt) {
     if (!evt.currentTarget.checkValidity()) {
       setErrorMessage({
@@ -225,12 +222,6 @@ function App() {
       setButtonState(false);
     }
   }
-
-  useEffect(() => {
-    setErrorMessage({});
-    setButtonState(true);
-  }, [isEditProfilePopupOpen, isAddPlacePopupOpen, isEditAvatarPopupOpen]);
-  //Validation==================================
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
@@ -245,7 +236,7 @@ function App() {
               <Register handleRegister={handleRegister} />
             </Route>
 
-            <ProtectedRoute path="/main" loggedIn={loggedIn}>
+            <ProtectedRoute path="/" loggedIn={loggedIn}>
               <Header userData={userData} signOut={signOut} />
               <Main
                 onEditProfile={handleEditProfileClick}
